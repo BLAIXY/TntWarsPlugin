@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import fr.blaixy.tntwars.MapManager;
 
 import java.util.*;
 
@@ -85,7 +84,7 @@ public class GameManager {
     public void openTeamSelectionMenu(Player player) {
         Inventory menu = Bukkit.createInventory(null, 9, "§c§lChoisissez votre équipe");
 
-        // Équipe Rouge
+        // Équipe Rouge - Utiliser le constructeur ItemStack correct pour 1.8.9
         ItemStack redWool = new ItemStack(Material.WOOL, 1, (short) 14);
         ItemMeta redMeta = redWool.getItemMeta();
         redMeta.setDisplayName("§c§lÉquipe ROUGE");
@@ -100,7 +99,7 @@ public class GameManager {
         redMeta.setLore(redLore);
         redWool.setItemMeta(redMeta);
 
-        // Équipe Bleue
+        // Équipe Bleue - Utiliser le constructeur ItemStack correct pour 1.8.9
         ItemStack blueWool = new ItemStack(Material.WOOL, 1, (short) 11);
         ItemMeta blueMeta = blueWool.getItemMeta();
         blueMeta.setDisplayName("§9§lÉquipe BLEUE");
@@ -214,6 +213,11 @@ public class GameManager {
     private void startGame() {
         gameState = GameState.PLAYING;
 
+        // Créer une instance du MapManager s'il n'existe pas
+        if (plugin.getMapManager() == null) {
+            plugin.setMapManager(new MapManager(plugin));
+        }
+
         // Enregistrer l'état initial de la map
         plugin.getMapManager().startRecording();
 
@@ -261,7 +265,7 @@ public class GameManager {
         // Redstone
         player.getInventory().addItem(new ItemStack(Material.REDSTONE, 16));
 
-        // Répéteurs
+        // Répéteurs - Utiliser le nom correct pour 1.8.9
         player.getInventory().addItem(new ItemStack(Material.DIODE, 8));
     }
 
@@ -319,7 +323,9 @@ public class GameManager {
         }
 
         // Réinitialiser la map
-        plugin.getMapManager().resetMap();
+        if (plugin.getMapManager() != null) {
+            plugin.getMapManager().resetMap();
+        }
 
         // Programmer le redémarrage
         new BukkitRunnable() {
@@ -341,7 +347,9 @@ public class GameManager {
         gameState = GameState.ENDING;
 
         // Réinitialiser la map
-        plugin.getMapManager().resetMap();
+        if (plugin.getMapManager() != null) {
+            plugin.getMapManager().resetMap();
+        }
 
         // Téléporter tous les joueurs au lobby
         Location lobby = plugin.getLocationManager().getLobby();
@@ -382,6 +390,7 @@ public class GameManager {
 
     private void broadcastTitle(String title, String subtitle) {
         for (Player player : allPlayers) {
+            // Méthode compatible avec 1.8.9
             player.sendTitle(title, subtitle);
         }
     }

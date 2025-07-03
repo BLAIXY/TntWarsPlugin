@@ -10,8 +10,9 @@ public class TNTWarsPlugin extends JavaPlugin {
 
     private static TNTWarsPlugin instance;
     private GameManager gameManager;
-    private fr.blaixy.tntwars.ScoreboardManager scoreboardManager;
+    private ScoreboardManager scoreboardManager;
     private LocationManager locationManager;
+    private MapManager mapManager;
 
     @Override
     public void onEnable() {
@@ -22,8 +23,9 @@ public class TNTWarsPlugin extends JavaPlugin {
 
         // Initialisation des managers
         this.gameManager = new GameManager(this);
-        this.scoreboardManager = new fr.blaixy.tntwars.ScoreboardManager();
+        this.scoreboardManager = new ScoreboardManager();
         this.locationManager = new LocationManager();
+        this.mapManager = new MapManager(this);
 
         // Enregistrement des events
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
@@ -106,11 +108,19 @@ public class TNTWarsPlugin extends JavaPlugin {
         return gameManager;
     }
 
-    public fr.blaixy.tntwars.ScoreboardManager getScoreboardManager() {
+    public ScoreboardManager getScoreboardManager() {
         return scoreboardManager;
     }
 
     public LocationManager getLocationManager() {
         return locationManager;
+    }
+
+    public MapManager getMapManager() {
+        return mapManager;
+    }
+
+    public void setMapManager(MapManager mapManager) {
+        this.mapManager = mapManager;
     }
 }

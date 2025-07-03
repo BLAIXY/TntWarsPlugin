@@ -91,6 +91,10 @@ public class CommandManager implements CommandExecutor {
                     player.sendMessage("§c§lVous n'avez pas la permission !");
                     return true;
                 }
+                // Créer une instance du MapManager s'il n'existe pas
+                if (plugin.getMapManager() == null) {
+                    plugin.setMapManager(new MapManager(plugin));
+                }
                 plugin.getMapManager().resetMap();
                 player.sendMessage("§a§lMap réinitialisée !");
                 break;

@@ -10,16 +10,19 @@ public class TNTWarsPlugin extends JavaPlugin {
 
     private static TNTWarsPlugin instance;
     private GameManager gameManager;
-    private fr.blaixy.tntwars.ScoreboardManager scoreboardManager; // Use fully qualified name
+    private fr.blaixy.tntwars.ScoreboardManager scoreboardManager;
     private LocationManager locationManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
+        // Configuration par défaut
+        setupDefaultConfig();
+
         // Initialisation des managers
         this.gameManager = new GameManager(this);
-        this.scoreboardManager = new fr.blaixy.tntwars.ScoreboardManager(); // Use fully qualified name
+        this.scoreboardManager = new fr.blaixy.tntwars.ScoreboardManager();
         this.locationManager = new LocationManager();
 
         // Enregistrement des events
@@ -28,9 +31,6 @@ public class TNTWarsPlugin extends JavaPlugin {
 
         // Enregistrement des commandes
         getCommand("tntwars").setExecutor(new CommandManager(this));
-
-        // Configuration par défaut
-        setupDefaultConfig();
 
         getLogger().info("TNT Wars Plugin activé !");
     }
@@ -44,9 +44,16 @@ public class TNTWarsPlugin extends JavaPlugin {
     }
 
     private void setupDefaultConfig() {
-        saveDefaultConfig();
+        // Créer le fichier de configuration par défaut s'il n'existe pas
+        try {
+            saveDefaultConfig();
+        } catch (IllegalArgumentException e) {
+            // Si le fichier config.yml n'existe pas dans les ressources, on le crée manuellement
+            getLogger().warning("Fichier config.yml par défaut introuvable, création manuelle...");
+            createDefaultConfig();
+        }
 
-        // Configuration des locations par défaut
+        // Configuration des locations par défaut si elles n'existent pas
         if (!getConfig().contains("locations")) {
             World world = Bukkit.getWorld("world");
             if (world != null) {
@@ -56,6 +63,35 @@ public class TNTWarsPlugin extends JavaPlugin {
                 saveConfig();
             }
         }
+    }
+
+    private void createDefaultConfig() {
+        // Créer la configuration par défaut programmatiquement
+        getConfig().set("game.countdown-time", 20);
+        getConfig().set("game.max-team-size", 2);
+        getConfig().set("game.end-game-delay", 5);
+        getConfig().set("game.tnt-damage-multiplier", 2.0);
+        getConfig().set("game.tnt-explosion-power", 0.5);
+
+        getConfig().set("messages.prefix", "§c§l[TNT Wars]§r ");
+        getConfig().set("messages.welcome", "§a§lBienvenue dans TNT Wars !");
+        getConfig().set("messages.team-selection", "§e§lCliquez sur la laine pour choisir votre équipe !");
+
+        getConfig().set("items.tnt-amount", 16);
+        getConfig().set("items.cobblestone-amount", 64);
+        getConfig().set("items.redstone-amount", 16);
+        getConfig().set("items.repeater-amount", 8);
+
+        getConfig().set("blocks.max-build-height", 150);
+
+        getConfig().set("scoreboard.title", "§c§l⚡ TNT WARS ⚡");
+        getConfig().set("scoreboard.server-ip", "play.tntwars.fr");
+
+        getConfig().set("debug.enabled", false);
+        getConfig().set("debug.log-game-events", true);
+
+        saveConfig();
+        getLogger().info("Configuration par défaut créée !");
     }
 
     private String locationToString(Location location) {

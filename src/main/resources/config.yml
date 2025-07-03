@@ -1,0 +1,68 @@
+# Configuration TNT Wars
+# Plugin créé pour Minecraft 1.8.9
+
+# Locations importantes
+locations:
+  lobby: "world,0,100,0,0,0"
+  red-spawn: "world,-50,100,0,90,0"
+  blue-spawn: "world,50,100,0,-90,0"
+
+# Paramètres de jeu
+game:
+  # Temps d'attente avant le démarrage (en secondes)
+  countdown-time: 20
+
+  # Nombre maximum de joueurs par équipe
+  max-players-per-team: 2
+
+  # Temps de grâce après la mort (en secondes)
+  respawn-delay: 5
+
+  # Activer les explosions TNT
+  enable-tnt-explosions: true
+
+  # Puissance des explosions TNT (0.0 à 1.0)
+  tnt-explosion-power: 0.5
+
+  # Hauteur maximale de construction
+  max-build-height: 150
+
+  # Régénération automatique de la map
+  auto-regenerate-map: true
+
+# Messages personnalisés
+messages:
+  prefix: "§c§l[TNT Wars] §r"
+  join-message: "§a§l+ §a{player} §aa rejoint TNT Wars !"
+  quit-message: "§c§l- §c{player} §ca quitté TNT Wars !"
+  team-red-full: "§c§lL'équipe rouge est complète !"
+  team-blue-full: "§9§lL'équipe bleue est complète !"
+  game-starting: "§a§lAssez de joueurs ! Début de la partie dans {time} secondes..."
+  game-countdown: "§e§lDébut dans §c§l{time} §e§lseconde{s} !"
+  game-started: "§a§l=== TNT WARS - C'EST PARTI ! ==="
+  player-eliminated: "§c§l{player} §c§la été éliminé !"
+  team-red-wins: "§c§l=== ÉQUIPE ROUGE GAGNE ! ==="
+  team-blue-wins: "§9§l=== ÉQUIPE BLEUE GAGNE ! ==="
+  game-draw: "§7§l=== ÉGALITÉ ! ==="
+
+# Récompenses (si vous voulez ajouter un système de récompenses)
+rewards:
+  winner-team:
+    - "eco give {player} 100"
+    - "give {player} diamond 1"
+  participation:
+    - "eco give {player} 10"
+
+# Paramètres avancés
+advanced:
+  # Débug mode
+  debug: false
+
+  # Sauvegarder les statistiques
+  save-statistics: true
+
+  # Réinitialiser l'inventaire à la connexion
+  clear-inventory-on-join: true
+
+  # Téléporter automatiquement au lobby à la connexion
+  auto-teleport-to-lobby: true

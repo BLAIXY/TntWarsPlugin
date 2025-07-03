@@ -64,19 +64,11 @@ public class CommandManager implements CommandExecutor {
                     player.sendMessage("§c§lVous n'avez pas la permission !");
                     return true;
                 }
-                // Forcer le démarrage de la partie
                 GameManager gameManager = plugin.getGameManager();
                 if (gameManager.getGameState() == GameManager.GameState.WAITING) {
                     if (gameManager.getRedTeam().size() > 0 && gameManager.getBlueTeam().size() > 0) {
                         player.sendMessage("§a§lPartie forcée !");
-                        // Utiliser la réflexion pour accéder à la méthode privée startGame
-                        try {
-                            java.lang.reflect.Method startGame = GameManager.class.getDeclaredMethod("startGame");
-                            startGame.setAccessible(true);
-                            startGame.invoke(gameManager);
-                        } catch (Exception e) {
-                            player.sendMessage("§c§lErreur lors du démarrage forcé !");
-                        }
+                        gameManager.forceStart();
                     } else {
                         player.sendMessage("§c§lIl faut au moins 1 joueur par équipe !");
                     }
@@ -92,6 +84,15 @@ public class CommandManager implements CommandExecutor {
                 }
                 plugin.getGameManager().endGame();
                 player.sendMessage("§a§lPartie arrêtée !");
+                break;
+
+            case "resetmap":
+                if (!player.hasPermission("tntwars.admin")) {
+                    player.sendMessage("§c§lVous n'avez pas la permission !");
+                    return true;
+                }
+                plugin.getMapManager().resetMap();
+                player.sendMessage("§a§lMap réinitialisée !");
                 break;
 
             case "join":
@@ -129,6 +130,7 @@ public class CommandManager implements CommandExecutor {
             player.sendMessage("§e/tntwars setbluespawn §7- Définir le spawn bleu");
             player.sendMessage("§e/tntwars forcestart §7- Forcer le démarrage");
             player.sendMessage("§e/tntwars stop §7- Arrêter la partie");
+            player.sendMessage("§e/tntwars resetmap §7- Réinitialiser la map");
         }
     }
 

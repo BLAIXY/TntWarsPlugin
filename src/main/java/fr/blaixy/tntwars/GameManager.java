@@ -6,10 +6,12 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import fr.blaixy.tntwars.MapManager;
 
 import java.util.*;
 
@@ -60,7 +62,7 @@ public class GameManager {
 
         // Messages de bienvenue
         player.sendMessage("§a§lBienvenue dans TNT Wars !");
-        player.sendMessage("§e§lCliquez sur la laine pour choisir votre équipe !");
+        player.sendMessage("§e§lCliquez sur la boussole pour choisir votre équipe !");
     }
 
     public void removePlayer(Player player) {
@@ -78,6 +80,53 @@ public class GameManager {
         }
 
         updateAllScoreboards();
+    }
+
+    public void openTeamSelectionMenu(Player player) {
+        Inventory menu = Bukkit.createInventory(null, 9, "§c§lChoisissez votre équipe");
+
+        // Équipe Rouge
+        ItemStack redWool = new ItemStack(Material.WOOL, 1, (short) 14);
+        ItemMeta redMeta = redWool.getItemMeta();
+        redMeta.setDisplayName("§c§lÉquipe ROUGE");
+        List<String> redLore = new ArrayList<>();
+        redLore.add("§7Joueurs actuels: §c" + redTeam.size() + "/2");
+        redLore.add("");
+        for (Player p : redTeam) {
+            redLore.add("§c• " + p.getName());
+        }
+        redLore.add("");
+        redLore.add("§7Cliquez pour rejoindre !");
+        redMeta.setLore(redLore);
+        redWool.setItemMeta(redMeta);
+
+        // Équipe Bleue
+        ItemStack blueWool = new ItemStack(Material.WOOL, 1, (short) 11);
+        ItemMeta blueMeta = blueWool.getItemMeta();
+        blueMeta.setDisplayName("§9§lÉquipe BLEUE");
+        List<String> blueLore = new ArrayList<>();
+        blueLore.add("§7Joueurs actuels: §9" + blueTeam.size() + "/2");
+        blueLore.add("");
+        for (Player p : blueTeam) {
+            blueLore.add("§9• " + p.getName());
+        }
+        blueLore.add("");
+        blueLore.add("§7Cliquez pour rejoindre !");
+        blueMeta.setLore(blueLore);
+        blueWool.setItemMeta(blueMeta);
+
+        // Spectateur
+        ItemStack spectatorItem = new ItemStack(Material.BARRIER);
+        ItemMeta spectatorMeta = spectatorItem.getItemMeta();
+        spectatorMeta.setDisplayName("§7§lSpectateur");
+        spectatorMeta.setLore(Arrays.asList("§7Regarder la partie", "§7sans participer"));
+        spectatorItem.setItemMeta(spectatorMeta);
+
+        menu.setItem(2, redWool);
+        menu.setItem(6, blueWool);
+        menu.setItem(4, spectatorItem);
+
+        player.openInventory(menu);
     }
 
     public void joinTeam(Player player, String team) {
@@ -98,6 +147,7 @@ public class GameManager {
             return;
         }
 
+        player.closeInventory();
         updateAllScoreboards();
         checkGameStart();
     }
@@ -106,26 +156,24 @@ public class GameManager {
         player.getInventory().clear();
         player.setGameMode(GameMode.ADVENTURE);
 
-        // Laine rouge
-        ItemStack redWool = new ItemStack(Material.WOOL, 1, (short) 14);
-        ItemMeta redMeta = redWool.getItemMeta();
-        redMeta.setDisplayName("§c§lÉquipe ROUGE");
-        redMeta.setLore(Arrays.asList("§7Cliquez pour rejoindre", "§7l'équipe rouge !"));
-        redWool.setItemMeta(redMeta);
+        // Boussole de sélection d'équipe
+        ItemStack compass = new ItemStack(Material.COMPASS);
+        ItemMeta compassMeta = compass.getItemMeta();
+        compassMeta.setDisplayName("§e§lSélection d'équipe");
+        compassMeta.setLore(Arrays.asList("§7Cliquez pour choisir", "§7votre équipe !"));
+        compass.setItemMeta(compassMeta);
 
-        // Laine bleue
-        ItemStack blueWool = new ItemStack(Material.WOOL, 1, (short) 11);
-        ItemMeta blueMeta = blueWool.getItemMeta();
-        blueMeta.setDisplayName("§9§lÉquipe BLEUE");
-        blueMeta.setLore(Arrays.asList("§7Cliquez pour rejoindre", "§7l'équipe bleue !"));
-        blueWool.setItemMeta(blueMeta);
-
-        player.getInventory().setItem(3, redWool);
-        player.getInventory().setItem(5, blueWool);
+        player.getInventory().setItem(4, compass);
     }
 
     private void checkGameStart() {
         if (gameState == GameState.WAITING && redTeam.size() == 2 && blueTeam.size() == 2) {
+            startCountdown();
+        }
+    }
+
+    public void forceStart() {
+        if (gameState == GameState.WAITING && redTeam.size() > 0 && blueTeam.size() > 0) {
             startCountdown();
         }
     }
@@ -165,6 +213,9 @@ public class GameManager {
 
     private void startGame() {
         gameState = GameState.PLAYING;
+
+        // Enregistrer l'état initial de la map
+        plugin.getMapManager().startRecording();
 
         // Téléporter les équipes
         Location redSpawn = plugin.getLocationManager().getRedSpawn();
@@ -226,27 +277,6 @@ public class GameManager {
     private void checkGameEnd() {
         if (gameState != GameState.PLAYING) return;
 
-        Set<Player> alivePlayers = new HashSet<>();
-        String winnerTeam = null;
-
-        for (Player player : redTeam) {
-            if (player.isOnline() && !player.isDead()) {
-                alivePlayers.add(player);
-                if (winnerTeam == null) winnerTeam = "rouge";
-            }
-        }
-
-        for (Player player : blueTeam) {
-            if (player.isOnline() && !player.isDead()) {
-                alivePlayers.add(player);
-                if (winnerTeam == null) {
-                    winnerTeam = "bleu";
-                } else if (winnerTeam.equals("rouge")) {
-                    winnerTeam = "none"; // Les deux équipes ont des survivants
-                }
-            }
-        }
-
         // Vérifier si une équipe a gagné
         boolean redAlive = false;
         boolean blueAlive = false;
@@ -288,6 +318,9 @@ public class GameManager {
             broadcastMessage("§7§l=== ÉGALITÉ ! ===");
         }
 
+        // Réinitialiser la map
+        plugin.getMapManager().resetMap();
+
         // Programmer le redémarrage
         new BukkitRunnable() {
             @Override
@@ -306,6 +339,9 @@ public class GameManager {
         }
 
         gameState = GameState.ENDING;
+
+        // Réinitialiser la map
+        plugin.getMapManager().resetMap();
 
         // Téléporter tous les joueurs au lobby
         Location lobby = plugin.getLocationManager().getLobby();

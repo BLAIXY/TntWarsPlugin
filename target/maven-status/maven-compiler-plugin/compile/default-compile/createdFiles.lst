@@ -1,3 +1,11 @@
+fr\blaixy\tntwars\ScoreboardManager$1.class
+fr\blaixy\tntwars\GameManager$1.class
+fr\blaixy\tntwars\GameManager.class
+fr\blaixy\tntwars\GameListener.class
+fr\blaixy\tntwars\GameManager$2.class
+fr\blaixy\tntwars\ScoreboardManager.class
+fr\blaixy\tntwars\PlayerListener.class
 fr\blaixy\tntwars\LocationManager.class
-fr\blaixy\tntwars\TNTWarsPlugin$1.class
+fr\blaixy\tntwars\GameManager$GameState.class
 fr\blaixy\tntwars\TNTWarsPlugin.class
+fr\blaixy\tntwars\CommandManager.class

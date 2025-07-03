@@ -1,16 +1,16 @@
 package fr.blaixy.tntwars;
 
+import fr.blaixy.tntwars.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.scoreboard.ScoreboardManager;
 
 public class TNTWarsPlugin extends JavaPlugin {
 
     private static TNTWarsPlugin instance;
     private GameManager gameManager;
-    private ScoreboardManager scoreboardManager;
+    private fr.blaixy.tntwars.ScoreboardManager scoreboardManager; // Use fully qualified name
     private LocationManager locationManager;
 
     @Override
@@ -19,7 +19,7 @@ public class TNTWarsPlugin extends JavaPlugin {
 
         // Initialisation des managers
         this.gameManager = new GameManager(this);
-        this.scoreboardManager = new ScoreboardManager();
+        this.scoreboardManager = new fr.blaixy.tntwars.ScoreboardManager(); // Use fully qualified name
         this.locationManager = new LocationManager();
 
         // Enregistrement des events
@@ -70,7 +70,7 @@ public class TNTWarsPlugin extends JavaPlugin {
         return gameManager;
     }
 
-    public ScoreboardManager getScoreboardManager() {
+    public fr.blaixy.tntwars.ScoreboardManager getScoreboardManager() {
         return scoreboardManager;
     }
 

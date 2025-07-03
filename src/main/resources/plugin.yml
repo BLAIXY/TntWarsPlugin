@@ -1,0 +1,24 @@
+name: TNTWars
+version: 1.0.0
+description: Plugin TNT Wars - Mode de jeu PvP avec TNT en 2v2
+author: VotreNom
+main: fr.blaixy.tntwars.TNTWarsPlugin
+api-version: 1.8
+
+commands:
+  tntwars:
+    description: Commandes principales de TNT Wars
+    usage: /tntwars <help|join|leave|info|setlobby|setredspawn|setbluespawn|forcestart|stop>
+    aliases: [tw, tntwar]
+
+permissions:
+  tntwars.admin:
+    description: Permissions administrateur pour TNT Wars
+    default: op
+  tntwars.player:
+    description: Permissions joueur pour TNT Wars
+    default: true
+
+# Configuration pour Minecraft 1.8.9
+depend: []
+softdepend: []

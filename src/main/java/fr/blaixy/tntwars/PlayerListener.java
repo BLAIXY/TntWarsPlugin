@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 
@@ -55,13 +56,41 @@ public class PlayerListener implements Listener {
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             String displayName = item.getItemMeta().getDisplayName();
 
-            // Sélection d'équipe
+            // Boussole de sélection d'équipe
+            if (displayName.equals("§e§lSélection d'équipe")) {
+                plugin.getGameManager().openTeamSelectionMenu(player);
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) event.getWhoClicked();
+
+        // Vérifier si c'est le menu de sélection d'équipe
+        if (event.getView().getTitle().equals("§c§lChoisissez votre équipe")) {
+            event.setCancelled(true);
+
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || !clickedItem.hasItemMeta() || !clickedItem.getItemMeta().hasDisplayName()) {
+                return;
+            }
+
+            String displayName = clickedItem.getItemMeta().getDisplayName();
+
             if (displayName.equals("§c§lÉquipe ROUGE")) {
                 plugin.getGameManager().joinTeam(player, "rouge");
-                event.setCancelled(true);
             } else if (displayName.equals("§9§lÉquipe BLEUE")) {
                 plugin.getGameManager().joinTeam(player, "bleu");
-                event.setCancelled(true);
+            } else if (displayName.equals("§7§lSpectateur")) {
+                // Optionnel: gérer le mode spectateur
+                player.sendMessage("§7§lMode spectateur pas encore implémenté !");
+                player.closeInventory();
             }
         }
     }

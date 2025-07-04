@@ -1,6 +1,7 @@
 package fr.blaixy.tntwars;
 
 import fr.blaixy.tntwars.*;
+import fr.blaixy.tntwars.listener.NPCProtectionListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,25 +14,28 @@ public class TNTWarsPlugin extends JavaPlugin {
     private ScoreboardManager scoreboardManager;
     private LocationManager locationManager;
     private MapManager mapManager;
+    private NPCManager npcManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
+        // Initialise les managers AVANT d’enregistrer les listeners
+        this.npcManager = new NPCManager(this);
+
+        getServer().getPluginManager().registerEvents(new NPCProtectionListener(npcManager), this);
+
         // Configuration par défaut
         setupDefaultConfig();
 
-        // Initialisation des managers
         this.gameManager = new GameManager(this);
         this.scoreboardManager = new ScoreboardManager();
         this.locationManager = new LocationManager();
         this.mapManager = new MapManager(this);
 
-        // Enregistrement des events
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
         Bukkit.getPluginManager().registerEvents(new GameListener(this), this);
 
-        // Enregistrement des commandes
         getCommand("tntwars").setExecutor(new CommandManager(this));
 
         getLogger().info("TNT Wars Plugin activé !");
@@ -120,7 +124,11 @@ public class TNTWarsPlugin extends JavaPlugin {
         return mapManager;
     }
 
+    public NPCManager getNPCManager() {
+        return npcManager;
+    }
     public void setMapManager(MapManager mapManager) {
         this.mapManager = mapManager;
+        
     }
 }

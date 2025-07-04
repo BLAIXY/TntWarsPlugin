@@ -1,5 +1,6 @@
 fr\blaixy\tntwars\MapManager$1.class
 fr\blaixy\tntwars\GameManager$1.class
+fr\blaixy\tntwars\NPCManager.class
 fr\blaixy\tntwars\GameManager$2.class
 fr\blaixy\tntwars\MapManager$2.class
 fr\blaixy\tntwars\GameManager$GameState.class
@@ -8,7 +9,9 @@ fr\blaixy\tntwars\GameManager.class
 fr\blaixy\tntwars\GameListener.class
 fr\blaixy\tntwars\MapManager.class
 fr\blaixy\tntwars\ScoreboardManager.class
+fr\blaixy\tntwars\listener\NPCProtectionListener.class
 fr\blaixy\tntwars\PlayerListener.class
+fr\blaixy\tntwars\WorldManager.class
 fr\blaixy\tntwars\LocationManager.class
 fr\blaixy\tntwars\TNTWarsPlugin.class
 fr\blaixy\tntwars\CommandManager.class

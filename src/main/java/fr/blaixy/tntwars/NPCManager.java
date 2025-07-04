@@ -52,18 +52,15 @@ public class NPCManager {
         Location blueLocation = getLocationFromConfig("npcs.blue-supplier.location");
         if (blueLocation != null) {
             spawnSupplierNPC("blue", blueLocation);
-        }
+            }
     }
 
     private void spawnSupplierNPC(String team, Location location) {
         Villager npc = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
 
         // Configuration du NPC
-        npc.setAI(false);
-        npc.setInvulnerable(true);
-        npc.setCollidable(false);
         npc.setRemoveWhenFarAway(false);
-        npc.setProfession(Villager.Profession.TOOLSMITH);
+        npc.setProfession(Villager.Profession.BLACKSMITH);
 
         // Nom du NPC
         String npcName = team.equals("red") ?
